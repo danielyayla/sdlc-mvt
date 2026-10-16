@@ -52,14 +52,14 @@ jobs:
         id: diagnose
         if: steps.probe.outputs.ok == 'false' && steps.dedupe.outputs.open == '0'
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
         run: |
-          if [ -z "$ANTHROPIC_API_KEY" ]; then
-            echo "ANTHROPIC_API_KEY not set; skipping diagnosis" | tee out/diagnosis.md
+          if [ -z "$CLAUDE_CODE_OAUTH_TOKEN" ]; then
+            echo "CLAUDE_CODE_OAUTH_TOKEN not set; skipping diagnosis" | tee out/diagnosis.md
             exit 0
           fi
           npm install -g @anthropic-ai/claude-code
-          claude -p --bare --max-turns 8 --max-budget-usd 1 --permission-prompts none \
+          claude -p --max-turns 8 --max-budget-usd 1 --permission-prompts none \
             --allowedTools "Read,Bash(curl *),Bash(gh run list *),Bash(gh run view *),Bash(gh api repos/*/pages*)" \
             --output-format text \
             "The site at $MONITOR_URL failed a scheduled probe. curl returned HTTP ${{ steps.probe.outputs.status }}.

@@ -8,7 +8,7 @@ on:
   pull_request_review_comment:
     types: [created]
 
-# Needs the repo secret ANTHROPIC_API_KEY. Neither job is a required check:
+# Needs the repo secret CLAUDE_CODE_OAUTH_TOKEN (from `claude setup-token`, Max subscription). Neither job is a required check:
 # findings inform the human who merges (POLICY rule 8).
 jobs:
   review:
@@ -25,7 +25,7 @@ jobs:
           fetch-depth: 0
       - uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           use_sticky_comment: true
           show_full_output: true
           prompt: |
@@ -67,7 +67,7 @@ jobs:
           fetch-depth: 0
       - uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           trigger_phrase: "@claude"
           claude_args: |
             --max-turns 30

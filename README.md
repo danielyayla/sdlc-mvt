@@ -30,6 +30,6 @@ Each stage ends by committing an artifact. The next stage starts by reading it. 
 
 ## Setup after cloning
 
-1. Add the repo secret `ANTHROPIC_API_KEY` (Settings → Secrets → Actions). The PR reviewer and the monitor's diagnosis step need it.
+1. Run `claude setup-token` (needs a Claude subscription) and store the printed token as the repo secret `CLAUDE_CODE_OAUTH_TOKEN`. The PR reviewer and the monitor's diagnosis step use it. Tokens expire; repeat this when the review job starts failing with an auth error.
 2. Run `scripts/bootstrap-github.sh` once (needs `gh` logged in as the owner).
 3. After the first deploy, set the repo variable `MONITOR_URL` to the live Pages URL to arm the monitor.
