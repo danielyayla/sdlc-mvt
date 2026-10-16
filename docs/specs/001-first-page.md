@@ -19,7 +19,7 @@ There is no public page that says what Daniel does and who it is for. Intent 001
 4. `npm run build` writes the site to `dist/`, and `deploy.yml` publishes that directory unchanged.
 5. A Playwright smoke test starts the built site with `astro preview`, loads `/sdlc-mvt/`, asserts HTTP 200, exactly one `h1`, and that the pitch text from `site.json` is visible. It runs in the CI `test` job.
 6. A Vitest unit test validates `site.json`: every required field is a non-empty string and the CTA is a valid `mailto:` or `https:` URL. This is the only unit test, since the page has no other logic.
-7. `npm run lint` runs `astro check` (template and type errors) and exits non-zero on any error.
+7. `npm run lint` runs `astro check` (template and type errors) and must exit non-zero on warnings as well as errors, to satisfy the zero-warnings rule in `CLAUDE.md`. By default `astro check` exits 0 on warnings; the plan pins the flag that raises the failing severity (`--minimum-failing-severity warning` in current Astro) and verifies it against the installed version.
 
 ### Non-functional
 
