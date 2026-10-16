@@ -1,0 +1,9 @@
+{
+  "name": "[Your name]",
+  "niche": "[Your niche: who you help and with what]",
+  "pitch": "[Your pitch: two or three sentences on what changes for them when they work with you.]",
+  "cta": {
+    "label": "Say hello",
+    "href": "mailto:hello@example.com"
+  }
+}
