@@ -7,7 +7,7 @@
 
 ## Files that change
 
-13 files planned, 14 after the departure below; one intent. Rule 11 waived by the owner (spec concern 2).
+13 files planned, 14 after the departures below; one intent. Rule 11 waived by the owner (spec concern 2).
 
 - `docs/plans/001-first-page.md` (new): this plan.
 - `.nvmrc` (new): `22`, so `nvm use` picks a Node that satisfies Astro's `>=22.22.0`.
@@ -74,4 +74,5 @@ To be filled in on the PR: output of `npm run lint`, `npm test`, `npm run build`
 
 - Added `vitest.config.ts` (14th file). Vitest's default include pattern picked up `e2e/smoke.spec.ts` and failed on the Playwright import; the config scopes Vitest to `src/**/*.test.ts`.
 - `playwright.config.ts` web server command ends with `--ignore-lock`. Astro 7's `astro preview` writes a lock file and refuses to start while one exists, which left Playwright's server step reporting an early exit after the first run.
+- Added `@types/node` (sixth dev dependency). `astro check` type-checks `playwright.config.ts`, which reads `process.env.CI`, and fails without Node's type definitions.
 
