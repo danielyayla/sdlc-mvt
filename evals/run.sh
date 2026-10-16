@@ -66,7 +66,7 @@ for dir in "$here"/cases/*/; do
     echo "Report exactly as the policy section 'How the reviewer reports' says."
     echo "Your first line must be exactly VERDICT: PASS or VERDICT: FAIL."
   } > "$tmp"
-  out=$(claude -p < "$tmp" --bare --tools "" --max-turns 1 --output-format text 2>&1 || true)
+  out=$(claude -p < "$tmp" --tools "" --max-turns 1 --output-format text 2>&1 || true)
   rm -f "$tmp"
   got=$(printf '%s\n' "$out" | grep -Eo 'VERDICT: *(PASS|FAIL)' | head -1 | grep -Eo 'PASS|FAIL' || echo "NONE")
   if [ "$got" = "$expected" ]; then res="ok"; pass=$((pass+1)); else res="MISMATCH"; fail=$((fail+1)); fi

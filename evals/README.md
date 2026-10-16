@@ -18,7 +18,7 @@ The runner feeds `POLICY.md` + `pr.md` + `diff.patch` to `claude -p` with no too
 ## Run it
 
 ```bash
-./evals/run.sh              # all cases, needs a logged-in `claude` CLI
+./evals/run.sh              # all cases, needs `claude auth login` done (subscription auth; do not add --bare, it skips that login)
 ./evals/run.sh --case 04    # one case (prefix match)
 ./evals/run.sh --dry-run    # validate case structure only, no model calls
 ```
