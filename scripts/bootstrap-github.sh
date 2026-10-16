@@ -46,5 +46,5 @@ gh api -X PUT "repos/$repo/branches/main/protection" --input - >/dev/null <<'JSO
 JSON
 
 echo "done. Remaining manual steps:"
-echo "  1. Add repo secret ANTHROPIC_API_KEY (Settings > Secrets and variables > Actions)."
+echo "  1. Run: claude setup-token   then: gh secret set CLAUDE_CODE_OAUTH_TOKEN --repo $repo"
 echo "  2. After the first deploy, set repo variable MONITOR_URL to the live Pages URL."
