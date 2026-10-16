@@ -1,7 +1,7 @@
 # Spec 001: first page
 
 - Source intent: `intents/001-first-page.md`
-- Status: draft
+- Status: accepted
 - Author: Claude Code (spec pass), reviewed by Daniel Kapper
 - Date: 2026-10-16
 
@@ -50,17 +50,17 @@ There is no public page that says what Daniel does and who it is for. Intent 001
 
 ## Flagged concerns
 
-1. **The copy is unknown.** The intent does not state the niche or the pitch. The build PR will ship `site.json` with clearly marked placeholder text (`[Your niche here]`) unless the owner supplies the words first. Shipping placeholders to a public URL is the owner's call. Recommendation: supply the four strings (name, niche, pitch, CTA) as a comment on this PR, or accept placeholders and follow with a content-only PR.
-2. **File count versus rule 11.** An Astro project with tests and config is roughly 11 files: `package.json`, `package-lock.json`, `astro.config.mjs`, `tsconfig.json`, `playwright.config.ts`, `.gitignore` edit, `src/layouts/Layout.astro`, `src/pages/index.astro`, `src/data/site.json`, `src/data/site.test.ts`, `e2e/smoke.spec.ts`. That is at the rule 11 threshold for one intent. Recommendation: the owner waives rule 11 for this PR in the PR body, since splitting a scaffold across two PRs would leave CI red in between.
+1. **The copy is unknown.** The intent does not state the niche or the pitch. The build PR will ship `site.json` with clearly marked placeholder text (`[Your niche here]`) unless the owner supplies the words first. Resolved: the owner chose placeholders (decision 2026-10-16); a content-only PR replaces them.
+2. **File count versus rule 11.** An Astro project with tests and config is roughly 11 files: `package.json`, `package-lock.json`, `astro.config.mjs`, `tsconfig.json`, `playwright.config.ts`, `.gitignore` edit, `src/layouts/Layout.astro`, `src/pages/index.astro`, `src/data/site.json`, `src/data/site.test.ts`, `e2e/smoke.spec.ts`. That is at the rule 11 threshold for one intent. Resolved: the owner waives rule 11 for the build PR (decision 2026-10-16); the PR body records the waiver.
 3. **First real deploy exercises an untested path.** `deploy.yml` uses an environment named `production` rather than the Pages default `github-pages`. `docs/GAPS.md` records that `actions/deploy-pages` may reject this. The first deploy of this intent is the test. If it fails, the fix is a workflow edit (rule 4, owner approval) and does not block the build PR.
 4. **The fourth done-when item is not a code change.** "The monitor is armed" requires setting the repo variable `MONITOR_URL`, which only the owner can do and only after the deploy succeeds. The build PR cannot prove it. Recommendation: the owner sets the variable right after approving the deploy, then triggers `monitor.yml` once by hand and links the green run on the intent.
 5. **Intent risk is "low" but the PR adds the toolchain.** Five dependencies and the lockfile are the largest diff this repo will see for a while. Risk stays low (nothing external, easy to revert) but the review should check the lockfile matches `package.json` (rule 5).
 
 ## Open questions
 
-- What exactly is the niche and the pitch copy? `carried to plan` (see concern 1; placeholders unless answered on this PR).
+- What exactly is the niche and the pitch copy? `answered: ship clearly marked placeholders in site.json; the owner replaces them in a content-only PR.` (Owner decision, 2026-10-16.)
 - Any visual direction, or plain readable defaults? `answered: plain readable defaults.` A system font stack, one column, max width around 60 characters, generous spacing. No design system until a later intent asks for one.
-- Should the CTA be an email or a link? `carried to plan` (default `mailto:`, owner to confirm the address or link).
+- Should the CTA be an email or a link? `answered: mailto:, with a placeholder address until the owner supplies one in the content PR.` (Owner decision, 2026-10-16.)
 
 ## Acceptance criteria
 
