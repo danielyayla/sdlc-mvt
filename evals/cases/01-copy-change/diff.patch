@@ -1,0 +1,13 @@
+diff --git a/src/pages/index.astro b/src/pages/index.astro
+index 3f1a2b4..9c8d7e6 100644
+--- a/src/pages/index.astro
++++ b/src/pages/index.astro
+@@ -8,7 +8,7 @@ import Layout from '../layouts/Layout.astro';
+ <Layout title="Daniel Kapper">
+   <main>
+     <h1>AI-native delivery for small teams</h1>
+-    <p class="pitch">I help teams ship with AI in the loop.</p>
++    <p class="pitch">I help small teams put AI in their delivery loop without losing control of what ships.</p>
+     <a href="mailto:hello@example.com">Say hello</a>
+   </main>
+ </Layout>

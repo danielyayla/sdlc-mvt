@@ -1,0 +1,44 @@
+diff --git a/src/lib/config.ts b/src/lib/config.ts
+new file mode 100644
+index 0000000..7777777
+--- /dev/null
++++ b/src/lib/config.ts
+@@ -0,0 +1,5 @@
++// Form backend settings
++export const FORM_ENDPOINT = 'https://api.formbackend.example/v1/submit';
++// TODO move to env before launch
++export const API_KEY = 'sk-live-4f9d2c81b7e6a3f0c5d1e8b2a7c4f9d2';
++export const TIMEOUT_MS = 8000;
+diff --git a/src/lib/submit.ts b/src/lib/submit.ts
+new file mode 100644
+index 0000000..8888888
+--- /dev/null
++++ b/src/lib/submit.ts
+@@ -0,0 +1,12 @@
++import { API_KEY, FORM_ENDPOINT } from './config';
++
++export function buildPayload(name: string, message: string) {
++  return { name: name.trim(), message: message.trim() };
++}
++
++export async function submit(name: string, message: string) {
++  return fetch(FORM_ENDPOINT, {
++    method: 'POST',
++    headers: { Authorization: `Bearer ${API_KEY}`, 'Content-Type': 'application/json' },
++    body: JSON.stringify(buildPayload(name, message)),
++  });
++}
+diff --git a/src/lib/submit.test.ts b/src/lib/submit.test.ts
+new file mode 100644
+index 0000000..9999999
+--- /dev/null
++++ b/src/lib/submit.test.ts
+@@ -0,0 +1,8 @@
++import { describe, expect, it } from 'vitest';
++import { buildPayload } from './submit';
++
++describe('buildPayload', () => {
++  it('trims fields', () => {
++    expect(buildPayload(' a ', ' b ')).toEqual({ name: 'a', message: 'b' });
++  });
++});
