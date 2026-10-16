@@ -1,0 +1,58 @@
+name: Intent
+description: Propose a change in your own words. Mirrors intents/INTENT_TEMPLATE.md.
+title: "Intent: <short title>"
+labels: ["intent"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        No formal language needed. If accepted, this becomes `intents/NNN-slug.md` and starts the loop.
+  - type: textarea
+    id: what
+    attributes:
+      label: What
+      description: One or two sentences. What should exist or change?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: What is bad or missing today, and what does better look like?
+    validations:
+      required: true
+  - type: input
+    id: who
+    attributes:
+      label: Who asked
+      description: A person, a ticket, or a monitor alert.
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: Checkable statements, one per line.
+      value: |
+        - [ ]
+    validations:
+      required: true
+  - type: dropdown
+    id: risk
+    attributes:
+      label: Risk level
+      description: low = content/config only; medium = new logic, dependency or deploy; high = secrets, workflows, hooks, policy, or data loss.
+      options:
+        - low
+        - medium
+        - high
+    validations:
+      required: true
+  - type: textarea
+    id: out
+    attributes:
+      label: Out of scope
+  - type: textarea
+    id: questions
+    attributes:
+      label: Open questions

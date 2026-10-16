@@ -1,0 +1,8 @@
+# Default owner for everything
+*                 @danielyayla
+
+# Protected paths (POLICY rule 4). Changes here need the owner's explicit approval.
+/.github/         @danielyayla
+/.claude/         @danielyayla
+/CLAUDE.md        @danielyayla
+/POLICY.md        @danielyayla

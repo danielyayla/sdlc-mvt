@@ -1,0 +1,16 @@
+diff --git a/src/lib/formatPitch.ts b/src/lib/formatPitch.ts
+index a1b2c3d..b2c3d4e 100644
+--- a/src/lib/formatPitch.ts
++++ b/src/lib/formatPitch.ts
+@@ -1,8 +1,10 @@
++const DEFAULT_PITCH = 'AI-native delivery for small teams';
++
+ /** Trim whitespace and ensure the pitch starts with a capital letter. */
+ export function formatPitch(input: string): string {
+   const trimmed = input.trim();
+   if (trimmed.length === 0) {
+-    return '';
++    return DEFAULT_PITCH;
+   }
+   return trimmed[0].toUpperCase() + trimmed.slice(1);
+ }
