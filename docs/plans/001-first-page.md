@@ -7,7 +7,7 @@
 
 ## Files that change
 
-13 files planned, 14 after the departures below; one intent. Rule 11 waived by the owner (spec concern 2).
+13 files in the diff, one intent. The list below names 13 candidates; the conditional `CLAUDE.md` edit turned out unnecessary and `vitest.config.ts` was added (see departures). Rule 11 waived by the owner (spec concern 2).
 
 - `docs/plans/001-first-page.md` (new): this plan.
 - `.nvmrc` (new): `22`, so `nvm use` picks a Node that satisfies Astro's `>=22.22.0`.
@@ -35,7 +35,7 @@ No change to `.gitignore` (already ignores `node_modules/`, `dist/`, `.astro/`, 
 6. Write `playwright.config.ts` and `e2e/smoke.spec.ts`; `npx playwright install chromium`; run `npm run test:e2e`. Commit ("test: Playwright smoke test").
 7. Open `http://localhost:4321/sdlc-mvt/` from `npm run preview` in the built-in browser, screenshot it for the PR, check light and dark, check keyboard focus on the CTA.
 8. If the build log lacks "Complete!", fix the line in `CLAUDE.md` and commit ("docs: build output line").
-9. Push; open the PR with: links to intent, spec and plan; five `New dependency:` lines; the rule 11 waiver; pasted lint, test, build and e2e output; the screenshot. Wait for the policy review; address Important findings; nits at the owner's discretion.
+9. Push; open the PR with: links to intent, spec and plan; the `New dependency:` lines; the rule 11 waiver; pasted lint, test, build and e2e output. The screenshot goes to the owner directly, since `gh` cannot attach images to a PR body. Wait for the policy review; address Important findings; nits at the owner's discretion.
 10. After the owner merges: `Deploy` runs, the owner approves the `production` environment, then `curl -sI https://danielyayla.github.io/sdlc-mvt/` must return 200. The owner sets `gh variable set MONITOR_URL --body https://danielyayla.github.io/sdlc-mvt/ --repo danielyayla/sdlc-mvt`, triggers `monitor.yml` once by hand (green), then once with `MONITOR_URL` pointed at `.../sdlc-mvt/does-not-exist` to prove an Issue labeled `intent` and `monitor` appears, closes that Issue, and resets the variable. Those runs are linked on the intent, and the intent status moves to `shipped`.
 
 ## Tests that prove it
@@ -72,7 +72,7 @@ To be filled in on the PR: output of `npm run lint`, `npm test`, `npm run build`
 
 ## Departures from plan
 
-- Added `vitest.config.ts` (14th file). Vitest's default include pattern picked up `e2e/smoke.spec.ts` and failed on the Playwright import; the config scopes Vitest to `src/**/*.test.ts`.
+- Added `vitest.config.ts`. Vitest's default include pattern picked up `e2e/smoke.spec.ts` and failed on the Playwright import; the config scopes Vitest to `src/**/*.test.ts`.
 - `playwright.config.ts` web server command ends with `--ignore-lock`. Astro 7's `astro preview` writes a lock file and refuses to start while one exists, which left Playwright's server step reporting an early exit after the first run.
-- Added `@types/node` (sixth dev dependency). `astro check` type-checks `playwright.config.ts`, which reads `process.env.CI`, and fails without Node's type definitions.
+- Added `@types/node` (sixth dev dependency, no new file). `astro check` type-checks `playwright.config.ts`, which reads `process.env.CI`, and fails without Node's type definitions.
 
