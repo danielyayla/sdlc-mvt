@@ -1,6 +1,6 @@
 # Intent 001: first page
 
-- Status: draft
+- Status: accepted
 - Author: Daniel Kapper
 - Date: 2026-10-16
 - Source: idea
