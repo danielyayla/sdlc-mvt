@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.astro/
+playwright-report/
+test-results/
+.env
+.env.*
+.DS_Store
+evals/runs/*
+!evals/runs/.gitkeep
+.claude/settings.local.json
+.claude/worktrees/
