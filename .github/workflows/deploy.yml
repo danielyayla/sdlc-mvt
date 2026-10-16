@@ -1,0 +1,53 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  # Decide whether there is anything to deploy before asking the reviewer.
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      has_app: ${{ steps.app.outputs.present }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: app
+        run: |
+          if [ -f package.json ]; then echo "present=true" >> "$GITHUB_OUTPUT"; else echo "present=false" >> "$GITHUB_OUTPUT"; echo "no app yet, nothing to deploy"; fi
+
+  # Gated on the `production` environment, which has a required reviewer.
+  # Nothing reaches Pages without a human approving this job.
+  deploy:
+    needs: check
+    if: needs.check.outputs.has_app == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - id: deployment
+        uses: actions/deploy-pages@v4

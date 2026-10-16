@@ -1,0 +1,100 @@
+name: Monitor
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+# Inert until the repo variable MONITOR_URL is set (do this after the first deploy).
+# On failure: dedupe against an open `monitor` issue, diagnose with claude -p (read-only),
+# and open an Issue labeled `intent` + `monitor` in the intent template format.
+jobs:
+  probe:
+    if: vars.MONITOR_URL != ''
+    runs-on: ubuntu-latest
+    env:
+      MONITOR_URL: ${{ vars.MONITOR_URL }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Curl the live URL
+        id: probe
+        run: |
+          set +e
+          mkdir -p out
+          status=$(curl -sS -L --retry 3 --retry-delay 10 --retry-all-errors \
+            --max-time 30 -o out/body.html -D out/headers.txt \
+            -w '%{http_code}' "$MONITOR_URL")
+          rc=$?
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "curl exit $rc, HTTP $status"
+          if [ "$rc" -ne 0 ] || [ "$status" -lt 200 ] || [ "$status" -ge 400 ]; then
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check for an existing open monitor issue
+        id: dedupe
+        if: steps.probe.outputs.ok == 'false'
+        run: |
+          n=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --label monitor --json number --jq 'length')
+          echo "open=$n" >> "$GITHUB_OUTPUT"
+          echo "open monitor issues: $n"
+
+      - name: Diagnose with Claude (read-only)
+        id: diagnose
+        if: steps.probe.outputs.ok == 'false' && steps.dedupe.outputs.open == '0'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "ANTHROPIC_API_KEY not set; skipping diagnosis" | tee out/diagnosis.md
+            exit 0
+          fi
+          npm install -g @anthropic-ai/claude-code
+          claude -p --bare --max-turns 8 --max-budget-usd 1 --permission-prompts none \
+            --allowedTools "Read,Bash(curl *),Bash(gh run list *),Bash(gh run view *),Bash(gh api repos/*/pages*)" \
+            --output-format text \
+            "The site at $MONITOR_URL failed a scheduled probe. curl returned HTTP ${{ steps.probe.outputs.status }}.
+             Evidence is in out/headers.txt and out/body.html. Recent deploys: gh run list --workflow Deploy --limit 5.
+             Diagnose the most likely cause. Then write an intent using the template in intents/INTENT_TEMPLATE.md:
+             Source is 'monitor run $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID'.
+             'What' is the fix you propose, 'Why' is the evidence, 'Who asked' is 'monitor.yml'.
+             Output only the markdown intent, nothing else." > out/diagnosis.md || echo "diagnosis failed (exit $?)" >> out/diagnosis.md
+
+      - name: Open an intent issue
+        if: steps.probe.outputs.ok == 'false' && steps.dedupe.outputs.open == '0'
+        run: |
+          {
+            echo "## Monitor failure"
+            echo
+            echo "- URL: $MONITOR_URL"
+            echo "- HTTP status: ${{ steps.probe.outputs.status }}"
+            echo "- Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo
+            echo "## Diagnosis"
+            echo
+            cat out/diagnosis.md 2>/dev/null || echo "(none)"
+            echo
+            echo "<details><summary>Response headers</summary>"
+            echo
+            echo '```'
+            head -c 4000 out/headers.txt 2>/dev/null
+            echo '```'
+            echo "</details>"
+          } > out/issue.md
+          gh issue create --repo "$GITHUB_REPOSITORY" \
+            --title "Intent: site down at $(date -u +%Y-%m-%dT%H:%MZ) (HTTP ${{ steps.probe.outputs.status }})" \
+            --label intent --label monitor \
+            --body-file out/issue.md
+
+      - name: Fail the run so it shows red
+        if: steps.probe.outputs.ok == 'false'
+        run: exit 1
